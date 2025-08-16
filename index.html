@@ -44,22 +44,46 @@
     </footer>
 </body>
 </html>
-<section id="einsaetze">
-    <h2>Einsatzberichte</h2>
+<script>
+// Array für die Einsatzberichte (wird lokal im Browser gespeichert)
+let einsatzListeData = [];
+
+// Referenzen auf HTML-Elemente
+const einsatzForm = document.getElementById('einsatzForm');
+const einsatzListe = document.getElementById('einsatzListe');
+
+// Funktion, um die Einsätze anzuzeigen
+function zeigeEinsaetze() {
+    if(einsatzListeData.length === 0){
+        einsatzListe.innerHTML = '<li>Noch keine Einsätze vorhanden.</li>';
+        return;
+    }
+    // Sortiere nach Datum, neueste zuerst
+    einsatzListeData.sort((a,b) => new Date(b.datum) - new Date(a.datum));
     
-    <!-- Formular für neue Berichte -->
-    <form id="einsatzForm">
-        <label for="datum">Datum:</label>
-        <input type="date" id="datum" required><br><br>
-        
-        <label for="bericht">Bericht:</label><br>
-        <textarea id="bericht" rows="3" cols="50" required></textarea><br><br>
-        
-        <button type="submit">Einsatz hinzufügen</button>
-    </form>
+    einsatzListe.innerHTML = '';
+    einsatzListeData.forEach(e => {
+        const li = document.createElement('li');
+        li.innerHTML = `<strong>${e.datum}:</strong> ${e.bericht}`;
+        einsatzListe.appendChild(li);
+    });
+}
+
+// Formular-Event: neuen Einsatz hinzufügen
+einsatzForm.addEventListener('submit', (event) => {
+    event.preventDefault(); // Seite nicht neu laden
     
-    <ul id="einsatzListe">
-        <li>Noch keine Einsätze vorhanden.</li>
-    </ul>
-</section>
+    const datum = document.getElementById('datum').value;
+    const bericht = document.getElementById('bericht').value;
+    
+    if(datum && bericht){
+        einsatzListeData.push({ datum, bericht });
+        zeigeEinsaetze();
+        einsatzForm.reset(); // Formular zurücksetzen
+    }
+});
+
+// Anzeige initialer Liste
+zeigeEinsaetze();
+</script>
 
